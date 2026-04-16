@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>📝 Travel Blog</h1>
+    <p>Stories, tips and travel guides</p>
+</div>
+
+<div class="container">
+    {% if blogs %}
+    <div class="grid grid-3">
+        {% for b in blogs %}
+        <a href="{{ url_for('blog_detail', id=b.id) }}" class="blog-card">
+            <div class="blog-img">
+                <img src="https://picsum.photos/seed/blog{{ b.id }}/400/250" alt="{{ b.title }}">
+            </div>
+            <div class="blog-body">
+                <h3>{{ b.title }}</h3>
+                <p>{{ b.content[:100] }}...</p>
+                <div class="blog-meta">
+                    <span>👁️ {{ b.views }} views</span>
+                    <span>{{ b.created_at.strftime('%d %b %Y') }}</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card text-center">
+        <h3>No blog posts yet</h3>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

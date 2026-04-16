@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>✈️ Flight Booking</h1>
+    <p>Search and book the best flights</p>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">Search Flights</h2>
+        <form method="POST" action="{{ url_for('flights') }}">
+            <div class="grid grid-4">
+                <div class="form-group">
+                    <label>From City</label>
+                    <input type="text" name="from" class="form-control" placeholder="e.g. Mumbai" 
+                           value="{{ from_city }}" required>
+                </div>
+                <div class="form-group">
+                    <label>To City</label>
+                    <input type="text" name="to" class="form-control" placeholder="e.g. Delhi" 
+                           value="{{ to_city }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Travel Date</label>
+                    <input type="date" name="date" class="form-control" value="{{ travel_date }}" required>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-search"></i> Search Flights
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if results %}
+    <div class="results-header">
+        <h3>{{ results|length }} Flights Found</h3>
+        <p>{{ from_city }} → {{ to_city }} | {{ travel_date }}</p>
+    </div>
+
+    {% for f in results %}
+    <div class="card flight-card">
+        <div class="flight-row">
+            <div class="flight-airline">
+                <span class="flight-icon">{{ f.icon }}</span>
+                <div>
+                    <h4>{{ f.airline }}</h4>
+                    <small class="text-muted">{{ f.flight_no }} | {{ f.class }}</small>
+                </div>
+            </div>
+            
+            <div class="flight-times">
+                <div class="time-block">
+                    <span class="time-big">{{ f.departure }}</span>
+                    <small>{{ f.from_city }}</small>
+                </div>
+                <div class="flight-duration">
+                    <small>{{ f.duration }}</small>
+                    <div class="duration-line">
+                        <span class="dot"></span>
+                        <span class="line"></span>
+                        <i class="fas fa-plane"></i>
+                        <span class="line"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <small class="{% if f.stops == 'Non-stop' %}text-success{% else %}text-warning{% endif %}">
+                        {{ f.stops }}
+                    </small>
+                </div>
+                <div class="time-block">
+                    <span class="time-big">{{ f.arrival }}</span>
+                    <small>{{ f.to_city }}</small>
+                </div>
+            </div>
+            
+            <div class="flight-info">
+                <div class="flight-tags">
+                    <span class="tag">🧳 {{ f.baggage }}</span>
+                    <span class="tag">🍽️ {{ f.meal }}</span>
+                    {% if f.refundable %}
+                        <span class="tag tag-success">✅ Refundable</span>
+                    {% else %}
+                        <span class="tag tag-danger">❌ Non-Refundable</span>
+                    {% endif %}
+                    <span class="tag">💺 {{ f.seats }} seats left</span>
+                </div>
+            </div>
+            
+            <div class="flight-price">
+                <span class="price-big">₹{{ f.price }}</span>
+                <small>per person</small>
+                
+                <form method="POST" action="{{ url_for('book_flight', flight_id=f.id) }}" class="mt-10">
+                    <input type="hidden" name="airline" value="{{ f.airline }}">
+                    <input type="hidden" name="price" value="{{ f.price }}">
+                    <input type="hidden" name="from_city" value="{{ f.from_city }}">
+                    <input type="hidden" name="to_city" value="{{ f.to_city }}">
+                    <input type="hidden" name="date" value="{{ f.date }}">
+                    
+                    <div class="form-group-inline">
+                        <label>Passengers:</label>
+                        <select name="passengers" class="form-control-sm">
+                            {% for i in range(1, 10) %}
+                            <option value="{{ i }}">{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-gold btn-block mt-10">
+                        <i class="fas fa-ticket-alt"></i> Book Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    {% elif from_city %}
+    <div class="card text-center">
+        <h3>😔 No flights found</h3>
+        <p>Try different cities or dates</p>
+    </div>
+    {% else %}
+    <div class="popular-section">
+        <h3>✨ Popular Flight Routes</h3>
+        <div class="grid grid-4">
+            <div class="popular-card" onclick="document.querySelector('[name=from]').value='Mumbai';document.querySelector('[name=to]').value='Delhi'">
+                <h4>Mumbai → Delhi</h4>
+                <p>From ₹3,499</p>
+            </div>
+            <div class="popular-card" onclick="document.querySelector('[name=from]').value='Delhi';document.querySelector('[name=to]').value='Goa'">
+                <h4>Delhi → Goa</h4>
+                <p>From ₹4,199</p>
+            </div>
+            <div class="popular-card" onclick="document.querySelector('[name=from]').value='Bangalore';document.querySelector('[name=to]').value='Mumbai'">
+                <h4>Bangalore → Mumbai</h4>
+                <p>From ₹2,899</p>
+            </div>
+            <div class="popular-card" onclick="document.querySelector('[name=from]').value='Chennai';document.querySelector('[name=to]').value='Kolkata'">
+                <h4>Chennai → Kolkata</h4>
+                <p>From ₹4,599</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

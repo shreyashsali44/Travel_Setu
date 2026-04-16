@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>{{ blog.title }}</h1>
+    <p>By {{ blog.author.full_name }} | {{ blog.created_at.strftime('%d %B %Y') }} | 👁️ {{ blog.views }} views</p>
+</div>
+
+<div class="container">
+    <div class="blog-detail">
+        <img src="https://picsum.photos/seed/blogdetail{{ blog.id }}/1000/400" alt="{{ blog.title }}" class="blog-detail-img">
+        
+        <div class="blog-content">
+            {{ blog.content }}
+        </div>
+        
+        {% if blog.tags %}
+        <div class="blog-tags">
+            {% for tag in blog.tags.split(',') %}
+            <span class="tag">{{ tag.strip() }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <a href="{{ url_for('blog') }}" class="btn btn-outline mt-20">← Back to Blog</a>
+    </div>
+</div>
+
+{% endblock %}

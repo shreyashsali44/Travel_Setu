@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>📅 Book {{ destination.name }}</h1>
+    <p>Complete your booking details</p>
+</div>
+
+<div class="container">
+    <div class="booking-layout">
+        <div class="card">
+            <h2 class="card-title">Booking Details</h2>
+            
+            <form method="POST" action="{{ url_for('book_destination', dest_id=destination.id) }}">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label>Check-in Date</label>
+                        <input type="date" name="check_in" class="form-control" min="{{ today }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Check-out Date</label>
+                        <input type="date" name="check_out" class="form-control" min="{{ today }}" required>
+                    </div>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label>Number of Guests</label>
+                        <select name="guests" class="form-control">
+                            {% for i in range(1, 11) %}
+                            <option value="{{ i }}">{{ i }} Guest(s)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Booking Type</label>
+                        <select name="booking_type" class="form-control">
+                            <option value="hotel">Hotel Stay</option>
+                            <option value="package">Full Package</option>
+                            <option value="activity">Activities Only</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="booking-summary-box">
+                    <h4>{{ destination.name }}</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ destination.location }}</p>
+                    <p class="price-info">₹{{ destination.price_per_day }} per day per person</p>
+                </div>
+                
+                <button type="submit" class="btn btn-gold btn-lg btn-block mt-20">
+                    Proceed to Payment
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

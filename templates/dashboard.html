@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>📊 Dashboard</h1>
+    <p>Welcome back, {{ current_user.full_name }}!</p>
+</div>
+
+<div class="container">
+    <!-- Stats -->
+    <div class="grid grid-4 mb-30">
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+                <h3>{{ total_bookings }}</h3>
+                <p>Total Bookings</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+                <h3>{{ confirmed_bookings }}</h3>
+                <p>Confirmed</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+                <h3>₹{{ "%.0f"|format(total_spent) }}</h3>
+                <p>Total Spent</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🌟</div>
+            <div class="stat-info">
+                <h3>{{ recommendations|length }}</h3>
+                <p>For You</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card mb-30">
+        <h2 class="card-title">🚀 Quick Book</h2>
+        <div class="grid grid-4">
+            <a href="{{ url_for('flights') }}" class="quick-action">✈️ Flights</a>
+            <a href="{{ url_for('hotels') }}" class="quick-action">🏨 Hotels</a>
+            <a href="{{ url_for('trains') }}" class="quick-action">🚂 Trains</a>
+            <a href="{{ url_for('buses') }}" class="quick-action">🚌 Buses</a>
+            <a href="{{ url_for('cabs') }}" class="quick-action">🚖 Cabs</a>
+            <a href="{{ url_for('villas') }}" class="quick-action">🏡 Villas</a>
+            <a href="{{ url_for('packages') }}" class="quick-action">🎁 Packages</a>
+            <a href="{{ url_for('tours') }}" class="quick-action">🎢 Tours</a>
+        </div>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="card mb-30">
+        <h2 class="card-title">📋 Recent Bookings</h2>
+        {% if bookings %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Ref</th>
+                        <th>Type</th>
+                        <th>Details</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in bookings %}
+                    <tr>
+                        <td><strong>{{ b.booking_ref or b.id }}</strong></td>
+                        <td>
+                            <span class="type-badge type-{{ b.booking_type }}">
+                                {{ b.booking_type|upper }}
+                            </span>
+                        </td>
+                        <td>{{ b.details or (b.destination.name if b.destination else 'N/A') }}</td>
+                        <td><strong>₹{{ "%.0f"|format(b.total_price) }}</strong></td>
+                        <td>
+                            <span class="status-badge status-{{ b.status }}">
+                                {{ b.status|upper }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if b.status == 'pending' %}
+                                <a href="{{ url_for('payment_page', booking_id=b.id) }}" class="btn btn-sm btn-gold">Pay</a>
+                                <a href="{{ url_for('cancel_booking', booking_id=b.id) }}" class="btn btn-sm btn-outline">Cancel</a>
+                            {% elif b.status == 'confirmed' %}
+                                <a href="{{ url_for('cancel_booking', booking_id=b.id) }}" class="btn btn-sm btn-outline">Cancel</a>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center">
+            <p>No bookings yet. Start exploring!</p>
+            <a href="{{ url_for('destinations') }}" class="btn btn-primary mt-10">Explore Destinations</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- AI Recommendations -->
+    {% if recommendations %}
+    <div class="card">
+        <h2 class="card-title">🤖 AI Recommendations for You</h2>
+        <div class="grid grid-4">
+            {% for dest in recommendations %}
+            <a href="{{ url_for('destination_detail', id=dest.id) }}" class="dest-card-mini">
+                <img src="{{ get_destination_image(dest, 400, 250) }}" alt="{{ dest.name }}">
+                <div class="dest-overlay">
+                    <h4>{{ dest.name }}</h4>
+                    <p>⭐ {{ dest.rating }} | ₹{{ dest.price_per_day }}/day</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

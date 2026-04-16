@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🚂 Train Booking</h1>
+    <p>Book train tickets at best prices</p>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">Search Trains</h2>
+        <form method="POST" action="{{ url_for('trains') }}">
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>From Station</label>
+                    <input type="text" name="from" class="form-control" placeholder="e.g. Mumbai" 
+                           value="{{ from_city }}" required>
+                </div>
+                <div class="form-group">
+                    <label>To Station</label>
+                    <input type="text" name="to" class="form-control" placeholder="e.g. Delhi" 
+                           value="{{ to_city }}" required>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-search"></i> Search Trains
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if trains %}
+    <h3 class="section-title mt-30">{{ trains|length }} Trains Found</h3>
+    
+    {% for t in trains %}
+    <div class="card train-card">
+        <div class="train-header">
+            <div>
+                <h4>{{ t.name }}</h4>
+                <small class="text-muted">#{{ t.number }} | {{ t.type }}</small>
+            </div>
+            <div class="train-days">
+                {% for d in ['M','T','W','T','F','S','S'] %}
+                <span class="day {% if d in t.days %}active{% endif %}">{{ d }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="train-schedule">
+            <div class="time-block">
+                <span class="time-big">{{ t.departure }}</span>
+                <small>{{ t.from_city }}</small>
+            </div>
+            <div class="train-duration">
+                <small>{{ t.duration }}</small>
+                <div class="duration-line">
+                    <span class="dot"></span><span class="line"></span><span class="dot"></span>
+                </div>
+            </div>
+            <div class="time-block">
+                <span class="time-big">{{ t.arrival }}</span>
+                <small>{{ t.to_city }}</small>
+            </div>
+        </div>
+        
+        <div class="train-classes">
+            {% for cls in t.classes %}
+            <div class="class-box {% if cls.available == 0 %}unavailable{% endif %}">
+                <strong>{{ cls.name }}</strong>
+                <span class="class-price">₹{{ cls.price }}</span>
+                {% if cls.available > 0 %}
+                <span class="avl-green">AVL {{ cls.available }}</span>
+                {% else %}
+                <span class="avl-red">WL</span>
+                {% endif %}
+                
+                {% if cls.available > 0 %}
+                <form method="POST" action="{{ url_for('book_train') }}" class="mt-5">
+                    <input type="hidden" name="train_name" value="{{ t.name }}">
+                    <input type="hidden" name="price" value="{{ cls.price }}">
+                    <input type="hidden" name="train_class" value="{{ cls.name }}">
+                    <input type="hidden" name="passengers" value="1">
+                    <input type="hidden" name="date" value="">
+                    <button type="submit" class="btn btn-sm btn-primary">Book</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+{% endblock %}

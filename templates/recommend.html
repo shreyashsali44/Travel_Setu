@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🤖 AI Recommendations</h1>
+    <p>Personalized suggestions just for you</p>
+</div>
+
+<div class="container">
+    <div class="card mb-30">
+        <h2 class="card-title">📊 Based on Your Preferences</h2>
+        <p class="text-muted">Content-based filtering recommendations</p>
+        
+        <div class="grid grid-3 mt-20">
+            {% for dest in content_recs %}
+            <a href="{{ url_for('destination_detail', id=dest.id) }}" class="destination-card">
+                <div class="dest-image">
+                    <img src="{{ get_destination_image(dest, 400, 250) }}" alt="{{ dest.name }}">
+                    <span class="dest-category">{{ dest.category }}</span>
+                </div>
+                <div class="dest-body">
+                    <h3>{{ dest.name }}</h3>
+                    <p class="dest-location"><i class="fas fa-map-marker-alt"></i> {{ dest.location }}</p>
+                    <div class="dest-footer">
+                        <span class="dest-rating">⭐ {{ dest.rating }}</span>
+                        <span class="dest-price">₹{{ dest.price_per_day }}/day</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title">👥 Travelers Like You Also Visited</h2>
+        <p class="text-muted">Collaborative filtering recommendations</p>
+        
+        <div class="grid grid-3 mt-20">
+            {% for dest in collab_recs %}
+            <a href="{{ url_for('destination_detail', id=dest.id) }}" class="destination-card">
+                <div class="dest-image">
+                    <img src="{{ get_destination_image(dest, 400, 250) }}" alt="{{ dest.name }}">
+                    <span class="dest-category">{{ dest.category }}</span>
+                </div>
+                <div class="dest-body">
+                    <h3>{{ dest.name }}</h3>
+                    <p class="dest-location"><i class="fas fa-map-marker-alt"></i> {{ dest.location }}</p>
+                    <div class="dest-footer">
+                        <span class="dest-rating">⭐ {{ dest.rating }}</span>
+                        <span class="dest-price">₹{{ dest.price_per_day }}/day</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

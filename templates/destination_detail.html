@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dest-detail-header" style="background-image: url('{{ get_destination_image(destination, 1200, 400) }}')">
+    <div class="dest-detail-overlay">
+        <div class="container">
+            <span class="category-badge">{{ destination.category }}</span>
+            <h1>{{ destination.name }}</h1>
+            <p><i class="fas fa-map-marker-alt"></i> {{ destination.location }}</p>
+            <div class="dest-detail-stats">
+                <span>⭐ {{ avg_rating|round(1) }} Rating</span>
+                <span>👁️ {{ destination.total_visits }} Visits</span>
+                <span>🗓️ {{ destination.best_season }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="dest-detail-grid">
+        <!-- Main Content -->
+        <div class="dest-main">
+            <div class="card">
+                <h2 class="card-title">About this Destination</h2>
+                <p>{{ destination.description }}</p>
+            </div>
+            
+            <!-- Reviews -->
+            <div class="card mt-30">
+                <h2 class="card-title">Reviews ({{ reviews|length }})</h2>
+                
+                {% if current_user.is_authenticated %}
+                <form method="POST" action="{{ url_for('add_review', dest_id=destination.id) }}" class="review-form">
+                    <div class="form-group">
+                        <label>Your Rating</label>
+                        <select name="rating" class="form-control">
+                            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ Good</option>
+                            <option value="3">⭐⭐⭐ Average</option>
+                            <option value="2">⭐⭐ Poor</option>
+                            <option value="1">⭐ Terrible</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Your Review</label>
+                        <textarea name="comment" class="form-control" rows="3" placeholder="Share your experience..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+                {% endif %}
+                
+                <div class="reviews-list mt-20">
+                    {% for r in reviews %}
+                    <div class="review-item">
+                        <div class="review-header">
+                            <strong>User #{{ r.user_id }}</strong>
+                            <span class="review-rating">{% for i in range(r.rating) %}⭐{% endfor %}</span>
+                            <span class="review-date">{{ r.created_at.strftime('%d %b %Y') }}</span>
+                        </div>
+                        <p>{{ r.comment }}</p>
+                        {% if r.sentiment == 'positive' %}
+                        <span class="sentiment-badge positive">😊 Positive</span>
+                        {% elif r.sentiment == 'negative' %}
+                        <span class="sentiment-badge negative">😞 Negative</span>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No reviews yet. Be the first to review!</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="dest-sidebar">
+            <div class="card booking-card">
+                <h3>Book This Destination</h3>
+                <div class="price-display">
+                    <span class="price-big">₹{{ destination.price_per_day }}</span>
+                    <span>/day</span>
+                </div>
+                <a href="{{ url_for('book_destination', dest_id=destination.id) }}" class="btn btn-gold btn-block btn-lg">
+                    Book Now
+                </a>
+                <a href="{{ url_for('itinerary', destination_id=destination.id) }}" class="btn btn-outline btn-block mt-10">
+                    Generate Itinerary
+                </a>
+            </div>
+            
+            <!-- Similar Destinations -->
+            {% if similar %}
+            <div class="card mt-20">
+                <h3>Similar Places</h3>
+                {% for s in similar %}
+                <a href="{{ url_for('destination_detail', id=s.id) }}" class="similar-item">
+                    <img src="{{ get_destination_image(s, 100, 70) }}" alt="{{ s.name }}">
+                    <div>
+                        <strong>{{ s.name }}</strong>
+                        <small>₹{{ s.price_per_day }}/day</small>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

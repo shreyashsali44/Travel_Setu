@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🗺️ Destinations</h1>
+    <p>Explore amazing places across India</p>
+</div>
+
+<div class="container">
+    <!-- Filters -->
+    <div class="filters-bar">
+        <div class="filter-categories">
+            <a href="{{ url_for('destinations') }}" class="filter-btn {% if not current_category %}active{% endif %}">All</a>
+            {% for cat in categories %}
+            <a href="{{ url_for('destinations', category=cat) }}" 
+               class="filter-btn {% if current_category == cat %}active{% endif %}">
+                {{ cat|capitalize }}
+            </a>
+            {% endfor %}
+        </div>
+        
+        <div class="filter-sort">
+            <select onchange="window.location.href=this.value" class="form-control-sm">
+                <option value="{{ url_for('destinations', category=current_category, sort='rating') }}" 
+                        {% if current_sort == 'rating' %}selected{% endif %}>Sort by Rating</option>
+                <option value="{{ url_for('destinations', category=current_category, sort='price_low') }}"
+                        {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                <option value="{{ url_for('destinations', category=current_category, sort='price_high') }}"
+                        {% if current_sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                <option value="{{ url_for('destinations', category=current_category, sort='name') }}"
+                        {% if current_sort == 'name' %}selected{% endif %}>Name: A-Z</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Destinations Grid -->
+    {% if destinations %}
+    <div class="destinations-grid">
+        {% for dest in destinations %}
+        <a href="{{ url_for('destination_detail', id=dest.id) }}" class="destination-card">
+            <div class="dest-image">
+                <img src="{{ get_destination_image(dest, 400, 300) }}" alt="{{ dest.name }}">
+                <span class="dest-category">{{ dest.category }}</span>
+            </div>
+            <div class="dest-body">
+                <h3>{{ dest.name }}</h3>
+                <p class="dest-location"><i class="fas fa-map-marker-alt"></i> {{ dest.location }}</p>
+                <p class="dest-desc">{{ dest.description[:80] }}...</p>
+                <div class="dest-meta">
+                    <span>🗓️ {{ dest.best_season }}</span>
+                </div>
+                <div class="dest-footer">
+                    <span class="dest-rating">⭐ {{ dest.rating }}</span>
+                    <span class="dest-price">₹{{ dest.price_per_day }}/day</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card text-center">
+        <h3>No destinations found</h3>
+        <p>Try a different category</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

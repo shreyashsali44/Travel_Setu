@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">🌍 Explore India with <span class="text-gold">TravelSetu</span></h1>
+        <p class="hero-subtitle">AI-Powered Travel Platform - Flights, Hotels, Trains, Buses & More</p>
+        
+        <div class="hero-search">
+            <a href="{{ url_for('flights') }}" class="hero-btn">✈️ Flights</a>
+            <a href="{{ url_for('hotels') }}" class="hero-btn">🏨 Hotels</a>
+            <a href="{{ url_for('trains') }}" class="hero-btn">🚂 Trains</a>
+            <a href="{{ url_for('packages') }}" class="hero-btn">🎁 Packages</a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-number">{{ total_destinations }}+</span>
+                <span class="stat-label">Destinations</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ total_users }}+</span>
+                <span class="stat-label">Happy Travelers</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">Hotels</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">Support</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section">
+    <div class="container">
+        <h2 class="section-title text-center">🚀 Our Services</h2>
+        <p class="section-subtitle text-center">Everything you need for your perfect trip</p>
+        
+        <div class="services-grid">
+            <a href="{{ url_for('flights') }}" class="service-card">
+                <div class="service-icon">✈️</div>
+                <h3>Flights</h3>
+                <p>Domestic & International flights at best prices</p>
+            </a>
+            <a href="{{ url_for('hotels') }}" class="service-card">
+                <div class="service-icon">🏨</div>
+                <h3>Hotels</h3>
+                <p>500+ hotels across India</p>
+            </a>
+            <a href="{{ url_for('trains') }}" class="service-card">
+                <div class="service-icon">🚂</div>
+                <h3>Trains</h3>
+                <p>IRCTC train booking made easy</p>
+            </a>
+            <a href="{{ url_for('buses') }}" class="service-card">
+                <div class="service-icon">🚌</div>
+                <h3>Buses</h3>
+                <p>AC & Non-AC buses for all routes</p>
+            </a>
+            <a href="{{ url_for('cabs') }}" class="service-card">
+                <div class="service-icon">🚖</div>
+                <h3>Cabs</h3>
+                <p>Airport transfers & outstation</p>
+            </a>
+            <a href="{{ url_for('villas') }}" class="service-card">
+                <div class="service-icon">🏡</div>
+                <h3>Villas</h3>
+                <p>Luxury villas for family vacations</p>
+            </a>
+            <a href="{{ url_for('packages') }}" class="service-card">
+                <div class="service-icon">🎁</div>
+                <h3>Packages</h3>
+                <p>Curated holiday packages</p>
+            </a>
+            <a href="{{ url_for('tours') }}" class="service-card">
+                <div class="service-icon">🎢</div>
+                <h3>Tours</h3>
+                <p>Guided tours & activities</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Destinations -->
+<section class="featured-section">
+    <div class="container">
+        <h2 class="section-title text-center">🌟 Featured Destinations</h2>
+        <p class="section-subtitle text-center">Handpicked places just for you</p>
+        
+        <div class="destinations-grid">
+            {% for dest in featured %}
+            <a href="{{ url_for('destination_detail', id=dest.id) }}" class="destination-card">
+                <div class="dest-image">
+                    <img src="{{ get_destination_image(dest, 400, 300) }}" alt="{{ dest.name }}">
+                    <span class="dest-category">{{ dest.category }}</span>
+                </div>
+                <div class="dest-body">
+                    <h3>{{ dest.name }}</h3>
+                    <p class="dest-location"><i class="fas fa-map-marker-alt"></i> {{ dest.location }}</p>
+                    <div class="dest-footer">
+                        <span class="dest-rating">⭐ {{ dest.rating }}</span>
+                        <span class="dest-price">₹{{ dest.price_per_day }}/day</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-30">
+            <a href="{{ url_for('destinations') }}" class="btn btn-primary btn-lg">
+                View All Destinations <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section">
+    <div class="container">
+        <h2 class="section-title text-center">🏷️ Explore by Category</h2>
+        
+        <div class="categories-grid">
+            {% for cat in categories %}
+            <a href="{{ url_for('destinations', category=cat) }}" class="category-card category-{{ cat }}">
+                <div class="category-icon">
+                    {% if cat == 'beaches' %}🏖️
+                    {% elif cat == 'adventure' %}⛰️
+                    {% elif cat == 'religious' %}🛕
+                    {% elif cat == 'heritage' %}🏰
+                    {% endif %}
+                </div>
+                <h3>{{ cat|capitalize }}</h3>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="why-section">
+    <div class="container">
+        <h2 class="section-title text-center">💡 Why Choose TravelSetu?</h2>
+        
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">🤖</div>
+                <h3>AI Recommendations</h3>
+                <p>Smart suggestions based on your preferences</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">💰</div>
+                <h3>Best Prices</h3>
+                <p>Guaranteed lowest prices with price match</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🔒</div>
+                <h3>Secure Booking</h3>
+                <p>100% secure payments with SSL encryption</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">📞</div>
+                <h3>24/7 Support</h3>
+                <p>Round the clock customer support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Start Your Journey?</h2>
+            <p>Join thousands of happy travelers who trust TravelSetu</p>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('register') }}" class="btn btn-gold btn-lg">Get Started Free</a>
+            {% else %}
+            <a href="{{ url_for('destinations') }}" class="btn btn-gold btn-lg">Explore Now</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

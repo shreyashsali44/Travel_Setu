@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🎁 Travel Packages</h1>
+    <p>Curated holiday packages for every budget</p>
+</div>
+
+<div class="container">
+    <div class="grid grid-3">
+        {% for p in packages %}
+        <div class="card package-card">
+            <div class="package-img">
+                <img src="https://picsum.photos/seed/pkg{{ p.id }}/400/250" alt="{{ p.name }}">
+                <span class="package-duration">{{ p.duration }}</span>
+            </div>
+            <div class="package-body">
+                <h3>{{ p.name }}</h3>
+                <p class="text-muted"><i class="fas fa-map-marked-alt"></i> {{ p.destinations }}</p>
+                <p class="package-includes">✅ {{ p.includes }}</p>
+                <div class="package-rating">⭐ {{ p.rating }}</div>
+                
+                <div class="package-footer">
+                    <div>
+                        <span class="price-big">₹{{ p.price }}</span>
+                        <small>/person</small>
+                    </div>
+                    <form method="POST" action="{{ url_for('book_package', package_id=p.id) }}">
+                        <input type="hidden" name="package_name" value="{{ p.name }}">
+                        <input type="hidden" name="price" value="{{ p.price }}">
+                        <div class="form-group-inline">
+                            <select name="travelers" class="form-control-sm">
+                                {% for i in range(1, 11) %}
+                                <option value="{{ i }}">{{ i }} pax</option>
+                                {% endfor %}
+                            </select>
+                            <input type="date" name="travel_date" class="form-control-sm" required>
+                        </div>
+                        <button type="submit" class="btn btn-gold btn-block mt-10">Book Package</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>💳 Payment</h1>
+    <p>Complete your booking</p>
+</div>
+
+<div class="container">
+    <div class="payment-layout">
+        <div class="card payment-card">
+            <h2 class="card-title">Booking Summary</h2>
+            
+            <div class="booking-summary">
+                <div class="summary-row">
+                    <span>Booking Type:</span>
+                    <strong>{{ booking.booking_type|upper }}</strong>
+                </div>
+                {% if booking.booking_ref %}
+                <div class="summary-row">
+                    <span>Reference:</span>
+                    <strong>{{ booking.booking_ref }}</strong>
+                </div>
+                {% endif %}
+                {% if booking.details %}
+                <div class="summary-row">
+                    <span>Details:</span>
+                    <strong>{{ booking.details }}</strong>
+                </div>
+                {% endif %}
+                {% if booking.check_in %}
+                <div class="summary-row">
+                    <span>Date:</span>
+                    <strong>{{ booking.check_in }}</strong>
+                </div>
+                {% endif %}
+                <div class="summary-row">
+                    <span>Guests/Qty:</span>
+                    <strong>{{ booking.guests }}</strong>
+                </div>
+                <div class="summary-row total-row">
+                    <span>Total Amount:</span>
+                    <strong class="price-big">₹{{ booking.total_price }}</strong>
+                </div>
+            </div>
+            
+            <h3 class="mt-30">Select Payment Method</h3>
+            
+            <div class="payment-methods">
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="upi" checked>
+                    <span>📱 UPI (GPay / PhonePe / Paytm)</span>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="card">
+                    <span>💳 Credit/Debit Card</span>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="netbanking">
+                    <span>🏦 Net Banking</span>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="wallet">
+                    <span>👛 Wallet</span>
+                </label>
+            </div>
+            
+            <div class="payment-actions mt-30">
+                <a href="{{ url_for('confirm_payment', booking_id=booking.id) }}" class="btn btn-gold btn-lg btn-block">
+                    <i class="fas fa-lock"></i> Pay ₹{{ booking.total_price }} Securely
+                </a>
+                <a href="{{ url_for('cancel_booking', booking_id=booking.id) }}" class="btn btn-outline btn-block mt-10">
+                    Cancel Booking
+                </a>
+            </div>
+            
+            <div class="payment-secure mt-20 text-center">
+                <small class="text-muted">🔒 100% Secure Payment | 256-bit SSL Encryption</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

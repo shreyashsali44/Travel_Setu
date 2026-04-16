@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🚌 Bus Booking</h1>
+    <p>AC, Sleeper & Luxury buses</p>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">Search Buses</h2>
+        <form method="POST" action="{{ url_for('buses') }}">
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>From</label>
+                    <input type="text" name="from" class="form-control" placeholder="Enter city" 
+                           value="{{ from_city }}" required>
+                </div>
+                <div class="form-group">
+                    <label>To</label>
+                    <input type="text" name="to" class="form-control" placeholder="Enter city" 
+                           value="{{ to_city }}" required>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-search"></i> Search Buses
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if buses %}
+    <h3 class="section-title mt-30">{{ buses|length }} Buses Found</h3>
+    
+    {% for b in buses %}
+    <div class="card bus-card">
+        <div class="bus-row">
+            <div class="bus-operator">
+                <h4>{{ b.operator }}</h4>
+                <small>{{ b.type }}</small>
+                <div class="bus-rating">⭐ {{ b.rating }}</div>
+            </div>
+            
+            <div class="bus-schedule">
+                <div class="time-block">
+                    <span class="time-big">{{ b.departure }}</span>
+                    <small>{{ b.from_city }}</small>
+                </div>
+                <div class="bus-duration">
+                    <small>{{ b.duration }}</small>
+                    <div class="duration-line">
+                        <span class="dot"></span><span class="line"></span><span class="dot"></span>
+                    </div>
+                </div>
+                <div class="time-block">
+                    <span class="time-big">{{ b.arrival }}</span>
+                    <small>{{ b.to_city }}</small>
+                </div>
+            </div>
+            
+            <div class="bus-amenities">
+                {% for a in b.amenities %}
+                <span class="tag">{{ a }}</span>
+                {% endfor %}
+            </div>
+            
+            <div class="bus-price">
+                <span class="price-big">₹{{ b.price }}</span>
+                <small>{{ b.seats }} seats left</small>
+                <form method="POST" action="{{ url_for('book_bus', bus_id=b.id) }}">
+                    <input type="hidden" name="operator" value="{{ b.operator }}">
+                    <input type="hidden" name="price" value="{{ b.price }}">
+                    <input type="hidden" name="seats" value="1">
+                    <input type="hidden" name="date" value="">
+                    <button type="submit" class="btn btn-gold mt-10">Book</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🚖 Cab Booking</h1>
+    <p>Airport transfers, outstation & local rides</p>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">Book a Cab</h2>
+        <form method="POST" action="{{ url_for('cabs') }}">
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>Pickup Location</label>
+                    <input type="text" name="pickup" class="form-control" placeholder="Enter pickup" 
+                           value="{{ pickup }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Drop Location</label>
+                    <input type="text" name="drop" class="form-control" placeholder="Enter drop" 
+                           value="{{ drop }}" required>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-search"></i> Search Cabs
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if cabs %}
+    <h3 class="section-title mt-30">Available Cabs</h3>
+    <div class="grid grid-3">
+        {% for c in cabs %}
+        <div class="card cab-card">
+            <div class="cab-icon">{{ c.icon }}</div>
+            <h3>{{ c.type }}</h3>
+            <p class="text-muted">{{ c.model }}</p>
+            
+            <div class="cab-specs">
+                <span>👥 {{ c.capacity }} seats</span>
+                <span>💰 ₹{{ c.per_km }}/km extra</span>
+            </div>
+            
+            <div class="cab-footer">
+                <span class="price-big">₹{{ c.price }}</span>
+                <form method="POST" action="{{ url_for('book_cab', cab_id=c.id) }}">
+                    <input type="hidden" name="cab_type" value="{{ c.type }}">
+                    <input type="hidden" name="price" value="{{ c.price }}">
+                    <input type="hidden" name="pickup" value="{{ c.pickup }}">
+                    <input type="hidden" name="drop" value="{{ c.drop }}">
+                    <input type="hidden" name="date" value="">
+                    <button type="submit" class="btn btn-primary mt-10">Book Now</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

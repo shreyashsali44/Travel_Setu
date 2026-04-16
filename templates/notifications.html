@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🔔 Notifications</h1>
+    <p>Your latest updates</p>
+</div>
+
+<div class="container">
+    <div class="notifications-layout">
+        {% if notifications %}
+        <div class="text-right mb-20">
+            <a href="{{ url_for('clear_notifications') }}" class="btn btn-outline btn-sm">Clear All</a>
+        </div>
+        
+        {% for n in notifications %}
+        <div class="notification-card {% if not n.is_read %}unread{% endif %}">
+            <div class="notif-icon">🔔</div>
+            <div class="notif-content">
+                <h4>{{ n.title }}</h4>
+                <p>{{ n.message }}</p>
+                <small class="text-muted">{{ n.created_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="card text-center">
+            <h3>No notifications</h3>
+            <p>You're all caught up!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🏨 Hotel Booking</h1>
+    <p>Find perfect stays for every budget</p>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">Search Hotels</h2>
+        <form method="POST" action="{{ url_for('hotels') }}">
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" name="city" class="form-control" placeholder="Enter city name" 
+                           value="{{ city }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Check-in</label>
+                    <input type="date" name="checkin" class="form-control" id="hotel-checkin">
+                </div>
+                <div class="form-group">
+                    <label>Check-out</label>
+                    <input type="date" name="checkout" class="form-control" id="hotel-checkout">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-20">
+                <i class="fas fa-search"></i> Search Hotels
+            </button>
+        </form>
+    </div>
+
+    {% if hotels %}
+    <h3 class="section-title mt-30">{{ hotels|length }} Hotels in {{ city }}</h3>
+    <div class="grid grid-3">
+        {% for h in hotels %}
+        <div class="card hotel-card">
+            <div class="hotel-img">
+                <img src="https://picsum.photos/seed/hotel{{ h.id }}/400/250" alt="{{ h.name }}">
+                <span class="hotel-stars">{% for s in range(h.stars) %}⭐{% endfor %}</span>
+            </div>
+            <div class="hotel-body">
+                <h3>{{ h.name }}</h3>
+                <p class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ city }}</p>
+                <div class="hotel-rating">
+                    <span class="rating-badge">{{ h.rating }}</span>
+                    <small>{{ h.amenities }}</small>
+                </div>
+                <div class="hotel-footer">
+                    <div>
+                        <span class="price-big">₹{{ h.price }}</span>
+                        <small>/night</small>
+                    </div>
+                    <form method="POST" action="{{ url_for('book_hotel', hotel_id=h.id) }}">
+                        <input type="hidden" name="hotel_name" value="{{ h.name }}">
+                        <input type="hidden" name="price" value="{{ h.price }}">
+                        <input type="hidden" name="city" value="{{ city }}">
+                        <input type="hidden" name="checkin" value="">
+                        <input type="hidden" name="checkout" value="">
+                        <input type="hidden" name="rooms" value="1">
+                        <button type="submit" class="btn btn-gold">Book Now</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.getElementById('hotel-checkin').min = new Date().toISOString().split('T')[0];
+</script>
+
+{% endblock %}

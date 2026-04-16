@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>📅 Itinerary Planner</h1>
+    <p>AI-generated day-wise travel plan</p>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">Generate Your Itinerary</h2>
+        <form method="POST" action="{{ url_for('itinerary') }}">
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>Select Destination</label>
+                    <select name="destination_id" class="form-control" required>
+                        <option value="">-- Choose --</option>
+                        {% for d in all_destinations %}
+                        <option value="{{ d.id }}" {% if destination and d.id == destination.id %}selected{% endif %}>
+                            {{ d.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Number of Days</label>
+                    <select name="days" class="form-control">
+                        {% for i in range(1, 11) %}
+                        <option value="{{ i }}" {% if days == i %}selected{% endif %}>{{ i }} Days</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-block">Generate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    {% if itinerary %}
+    <div class="itinerary-result mt-30">
+        <h2>📍 {{ destination.name }} - {{ days }} Day Itinerary</h2>
+        
+        {% for day in itinerary %}
+        <div class="card itinerary-day">
+            <div class="day-header">
+                <h3>Day {{ day.day }} - {{ day.day_name }}</h3>
+                <span class="day-date">{{ day.date }}</span>
+            </div>
+            <div class="day-activities">
+                {% for act in day.activities %}
+                <div class="activity-item">
+                    <span class="activity-time">{{ act.time }}</span>
+                    <span class="activity-name">{{ act.activity }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="text-center mt-20">
+            <a href="{{ url_for('book_destination', dest_id=destination.id) }}" class="btn btn-gold btn-lg">
+                Book This Trip
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

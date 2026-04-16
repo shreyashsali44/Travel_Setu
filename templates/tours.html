@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🎢 Tours & Activities</h1>
+    <p>Discover amazing experiences</p>
+</div>
+
+<div class="container">
+    <div class="grid grid-3">
+        {% for t in tours %}
+        <div class="card tour-card">
+            <div class="tour-img">
+                <img src="https://picsum.photos/seed/tour{{ t.id }}/400/250" alt="{{ t.name }}">
+                <span class="tour-duration">{{ t.duration }}</span>
+            </div>
+            <div class="tour-body">
+                <h3>{{ t.name }}</h3>
+                <p class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ t.location }}</p>
+                <p class="tour-includes">✅ {{ t.includes }}</p>
+                <div class="tour-rating">⭐ {{ t.rating }}</div>
+                
+                <div class="tour-footer">
+                    <div>
+                        <span class="price-big">₹{{ t.price }}</span>
+                        <small>/person</small>
+                    </div>
+                    <form method="POST" action="{{ url_for('book_tour', tour_id=t.id) }}">
+                        <input type="hidden" name="tour_name" value="{{ t.name }}">
+                        <input type="hidden" name="price" value="{{ t.price }}">
+                        <div class="form-group-inline">
+                            <select name="participants" class="form-control-sm">
+                                {% for i in range(1, 11) %}
+                                <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="date" name="tour_date" class="form-control-sm" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-10">Book Tour</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

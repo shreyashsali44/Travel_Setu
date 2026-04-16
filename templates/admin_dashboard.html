@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🛠️ Admin Dashboard</h1>
+    <p>Manage your travel platform</p>
+</div>
+
+<div class="container">
+    <!-- Stats -->
+    <div class="grid grid-4 mb-30">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <h3>{{ stats.total_users }}</h3>
+                <p>Users</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🗺️</div>
+            <div class="stat-info">
+                <h3>{{ stats.total_destinations }}</h3>
+                <p>Destinations</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+                <h3>{{ stats.total_bookings }}</h3>
+                <p>Bookings</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+                <h3>₹{{ "%.0f"|format(stats.total_revenue) }}</h3>
+                <p>Revenue</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Destination -->
+    <div class="card mb-30">
+        <h2 class="card-title">➕ Add New Destination</h2>
+        <form method="POST" action="{{ url_for('add_destination') }}">
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" class="form-control">
+                        <option value="beaches">Beaches</option>
+                        <option value="adventure">Adventure</option>
+                        <option value="religious">Religious</option>
+                        <option value="heritage">Heritage</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label>Price per Day</label>
+                    <input type="number" name="price" class="form-control" value="2000">
+                </div>
+                <div class="form-group">
+                    <label>Best Season</label>
+                    <input type="text" name="season" class="form-control" value="All Year">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Destination</button>
+        </form>
+    </div>
+    
+    <!-- All Destinations -->
+    <div class="card mb-30">
+        <h2 class="card-title">🗺️ All Destinations</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Rating</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in stats.all_destinations %}
+                    <tr>
+                        <td>{{ d.id }}</td>
+                        <td>{{ d.name }}</td>
+                        <td>{{ d.category }}</td>
+                        <td>₹{{ d.price_per_day }}</td>
+                        <td>⭐ {{ d.rating }}</td>
+                        <td>
+                            <a href="{{ url_for('delete_destination', id=d.id) }}" 
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Delete this destination?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Recent Bookings -->
+    <div class="card">
+        <h2 class="card-title">📋 Recent Bookings</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in stats.recent_bookings %}
+                    <tr>
+                        <td>{{ b.id }}</td>
+                        <td>{{ b.user.username }}</td>
+                        <td>{{ b.booking_type }}</td>
+                        <td>₹{{ "%.0f"|format(b.total_price) }}</td>
+                        <td><span class="status-badge status-{{ b.status }}">{{ b.status }}</span></td>
+                        <td>{{ b.created_at.strftime('%d %b %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
